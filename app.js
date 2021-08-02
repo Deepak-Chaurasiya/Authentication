@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const app = express();
 const encrypt = require("mongoose-encryption");
+const md5 = require("md5");
 
 mongoose.connect('mongodb://localhost:27017/user_DB', { useNewUrlParser:true, useUnifiedTopology: true, useCreateIndex: true,
    useFindAndModify: false}).then(()=>{
@@ -25,7 +26,9 @@ password: String
 });
 
 console.log(process.env.SECRET);
-userSchema.plugin(encrypt, {secret:process.env.SECRET, encryptedFields:['password']});
+
+// below user schema is used with mongoose-encryption which just converts the given password with some key like SECRET key with the password.
+// userSchema.plugin(encrypt, {secret:process.env.SECRET, encryptedFields:['password']});
 
 const userModel = mongoose.model("User", userSchema);
 
@@ -51,7 +54,7 @@ app.post("/register", function(req, res){
 
 const userDetail = new userModel({
 email: req.body.username,
-password: req.body.password
+password: md5(req.body.password)
 });
 
 
@@ -65,7 +68,7 @@ userDetail.save(function(err){
 
 app.post("/login", function(req, res){
 const usernameu  = req.body.usernamee;
-const passwordp  = req.body.passwordd;
+const passwordp  = md5(req.body.passwordd);
 
 userModel.findOne({email: usernameu},function(err, foundresult){
 
