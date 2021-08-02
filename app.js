@@ -17,10 +17,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine","ejs");
 
-const userSchema = new mongoose.Schema{
+const userSchema = new mongoose.Schema({
 email: String,
 password: String
-}
+});
 
 const secret = "Thisisourlittlesecret";
 userSchema.plugin(encrypt, {secret:secret, encryptedFields:['password']});
